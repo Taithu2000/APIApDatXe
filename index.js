@@ -5,6 +5,7 @@ require("dotenv").config();
 const userRouter = require("./src/routers/userRouter");
 const busRouter = require("./src/routers/busRouter");
 const routeRouter = require("./src/routers/routeRouter");
+const seatRouter = require("./src/routers/seatRouter");
 
 const app = express();
 
@@ -16,12 +17,13 @@ app.use(express.json());
 mongoose
   .connect(dbUrl)
   .then(() => {
-    console.log("Kết nối Mon  goDB   thành công");
+    console.log("Kết nối MongoDB   thành công");
 
     // Sử dụng router
     app.use("/", userRouter);
     app.use("/", busRouter);
     app.use("/", routeRouter);
+    app.use("/", seatRouter);
 
     // Chạy máy chủ 3000
     app.listen(3306, () => {

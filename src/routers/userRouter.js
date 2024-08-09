@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-
 const User = require("../models/user");
 
 // lấy tất cả user
@@ -14,7 +13,6 @@ router.get("/users", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
 
 // tạo mới user
 router.post("/users", async (req, res) => {
@@ -37,6 +35,7 @@ router.post("/users", async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+
 
 // lấy 1 user
 router.get("/users/:phoneNumber", async (req, res) => {
