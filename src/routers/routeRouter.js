@@ -28,6 +28,7 @@ router.post("/route", async (req, res) => {
       departure_time,
       total_time,
       date_interval,
+      total_seats,
     } = req.body;
 
     // Tạo route mới
@@ -52,8 +53,8 @@ router.post("/route", async (req, res) => {
         seat_date: currentDate.format("YYYY-MM-DD"),
         route_id: newRoute._id,
         bus_id: bus_id,
-        total_seats: req.body.total_seats,
-        available_seats: req.body.total_seats,
+        total_seats: total_seats,
+        available_seats: total_seats,
       });
 
       const newSeat = await seat.save();
@@ -63,27 +64,6 @@ router.post("/route", async (req, res) => {
     }
 
     res.status(201).json({ route: newRoute, seats: seats });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-router.post("/route", async (req, res) => {
-  try {
-    const route = new Route({
-      start_date: req.body.start_date,
-      end_date: req.body.end_date,
-      bus_id: req.body.bus_id,
-      start_point: req.body.start_point,
-      end_point: req.body.end_point,
-      departure_time: req.body.departure_time,
-      total_time: req.body.total_time,
-      date_interval: req.body.date_interval,
-    });
-
-    const newRoute = await route.save();
-
-    res.status(201).json(newRoute);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -114,13 +94,16 @@ router.put("/route/update/:_id", async (req, res) => {
       return res.status(404).json({ message: "route not found" });
     }
 
+
+
     route.bus_id = req.body.bus_id;
+    route.end_date = req.body.end_date;
     route.start_point = req.body.start_point;
     route.end_point = req.body.end_point;
     route.departure_time = req.body.departure_time;
     route.total_time = req.body.total_time;
 
-    const updatedRoute = await Route.save();
+    const updatedRoute = await route.save();
     res.json(updatedRoute);
   } catch (err) {
     res.status(400).json({ message: err.message });
