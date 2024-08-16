@@ -1,10 +1,7 @@
 const mongoose = require("mongoose");
 
 const dataSchema = new mongoose.Schema({
-  phoneNumber: {
-    type: String,
-    required: true,
-  },
+  phoneNumber: String,
   name: String,
   password: String,
   roles: String,
@@ -12,10 +9,6 @@ const dataSchema = new mongoose.Schema({
   birthDate: Date,
   sex: String,
   image: String,
-  createAt: {
-    type: Date,
-    default: () => new Date(),
-  },
 });
 
 module.exports = mongoose.model("User", dataSchema);

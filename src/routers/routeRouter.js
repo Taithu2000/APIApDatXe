@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const moment = require("moment");
+require("moment-timezone");
 
-const Route = require("../models/routes");
-const Seat = require("../models/seats");
+const Route = require("../models/route");
+const Seat = require("../models/seat");
 
 // Lấy tất cả danh sách route
 router.get("/route", async (req, res) => {
@@ -45,25 +46,28 @@ router.post("/route", async (req, res) => {
 
     const newRoute = await route.save();
 
-    // Tạo seat cho từng ngày trong khoảng thời gian từ start_date đến end_date
     const seats = [];
-    let currentDate = moment(start_date);
-    while (currentDate.isSameOrBefore(moment(end_date))) {
-      const seat = new Seat({
-        seat_date: currentDate.format("YYYY-MM-DD"),
+
+    let currentDate = moment(start_date).startOf("day");
+    const endDate = moment(end_date).startOf("day");
+
+    // Tạo dữ liệu cho tất cả các ghế  từ start_date đến end_date
+    while (currentDate.isSameOrBefore(endDate)) {
+      seats.push({
+        seat_date: currentDate.toDate(),
         route_id: newRoute._id,
         bus_id: bus_id,
         total_seats: total_seats,
         available_seats: total_seats,
       });
 
-      const newSeat = await seat.save();
-      seats.push(newSeat);
-
       currentDate = currentDate.add(date_interval, "days");
     }
 
-    res.status(201).json({ route: newRoute, seats: seats });
+    // Sử dụng insertMany để chèn nhiều bản ghi cùng một lúc
+    const seatResult = await Seat.insertMany(seats);
+
+    res.status(201).json({ route: newRoute, seats: seatResult });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -93,8 +97,6 @@ router.put("/route/update/:_id", async (req, res) => {
     if (!route) {
       return res.status(404).json({ message: "route not found" });
     }
-
-
 
     route.bus_id = req.body.bus_id;
     route.end_date = req.body.end_date;

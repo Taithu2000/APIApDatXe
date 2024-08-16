@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Seat = require("../models/seats");
+const Seat = require("../models/seat");
 
 //Lấy tất cả các ghế
 router.get("/seat", async (req, res) => {
@@ -40,8 +40,22 @@ router.get("/seat/:route_id", async (req, res) => {
   }
 });
 
+// Lấy 1 dữ liệu theo route_id và date
+router.get("/seat/:route_id/:date", async (req, res) => {
+  try {
+    const seat = await Seat.findOne({
+      route_id: req.params.route_id,
+      seat_date: req.params.date,
+    });
+
+    res.json(seat);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Lấy tất cả dữ liệu theo route_id
-router.get("/seat/:route_id", async (req, res) => {
+router.get("/seat/all/:route_id", async (req, res) => {
   try {
     const { route_id } = req.params;
     const seats = await Seat.find({ route_id });

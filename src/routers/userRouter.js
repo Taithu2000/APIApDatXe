@@ -8,7 +8,6 @@ router.get("/users", async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
-    console.log(users);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -25,7 +24,6 @@ router.post("/users", async (req, res) => {
     birthDate: req.body.birthDate,
     sex: req.body.sex,
     image: req.body.image,
-    createAt: req.body.createAt,
   });
 
   try {
@@ -36,9 +34,19 @@ router.post("/users", async (req, res) => {
   }
 });
 
-
 // lấy 1 user
-router.get("/users/:phoneNumber", async (req, res) => {
+router.get("/users/:_id", async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.params._id });
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// lấy 1 user qua phoneNumber
+router.get("/users/phone/:phoneNumber", async (req, res) => {
   try {
     const user = await User.findOne({ phoneNumber: req.params.phoneNumber });
 
@@ -49,15 +57,14 @@ router.get("/users/:phoneNumber", async (req, res) => {
 });
 
 // cập nhật thông tin
-router.put("/users/update/:phoneNumber", async (req, res) => {
+router.put("/users/update/:_id", async (req, res) => {
   try {
-    const user = await User.findOne({ phoneNumber: req.params.phoneNumber });
+    const user = await User.findOne({ _id: req.params._id });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     user.name = req.body.name;
-    user.password = req.body.password;
     user.email = req.body.email;
     user.birthDate = req.body.birthDate;
     user.sex = req.body.sex;
@@ -71,10 +78,10 @@ router.put("/users/update/:phoneNumber", async (req, res) => {
 });
 
 // xóa user
-router.delete("/users/delete/:phoneNumber", async (req, res) => {
+router.delete("/users/delete/:_id", async (req, res) => {
   try {
     const user = await User.findOneAndDelete({
-      phoneNumber: req.params.phoneNumber,
+      _id: req.params._id,
     });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
