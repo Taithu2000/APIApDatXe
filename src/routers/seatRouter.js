@@ -12,6 +12,16 @@ router.get("/seat", async (req, res) => {
   }
 });
 
+//Lấy tất cả các ghế trong ngày
+router.get("/seat_date/:date", async (req, res) => {
+  try {
+    const seats = await Seat.find({ seat_date: req.params.date });
+    res.json(seats);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Tạo một ghế mới
 router.post("/seat", async (req, res) => {
   const seat = new Seat({

@@ -6,6 +6,16 @@ const mongoose = require("mongoose");
 const moment = require("moment");
 require("moment-timezone");
 
+router.get("/trip", async (req, res) => {
+  try {
+    const trips = await Trip.find();
+
+    res.json(trips);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 //------------------- //-------------------lấy danh sách trip qua route_id và ngày//-------------------//-------------------
 
 router.get("/trip/:route_id/:date", async (req, res) => {
@@ -13,6 +23,36 @@ router.get("/trip/:route_id/:date", async (req, res) => {
     const trips = await Trip.find({
       route_id: req.params.route_id,
       trip_date: req.params.date,
+    });
+
+    res.json(trips);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+//------------------- //-------------------lấy danh sách trip thông qua ngày ngày//-------------------//-------------------
+
+router.get("/trip/:date", async (req, res) => {
+  try {
+    const trips = await Trip.find({
+      trip_date: req.params.date,
+    });
+
+    res.json(trips);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+//------------------- //-------------------lấy danh sách trip thông qua ngày, Điểm đi, điểm đến//-------------------//-------------------
+
+router.get("/trip/:date/:start/:end", async (req, res) => {
+  try {
+    const trips = await Trip.find({
+      trip_date: req.params.date,
+      start_point: req.params.start,
+      end_point: req.params.end,
     });
 
     res.json(trips);
